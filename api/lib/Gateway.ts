@@ -381,6 +381,20 @@ export default class Gateway {
 					? payload.value
 					: payload
 
+			//will fix the STOP issue, on HA MQTT
+			if (payload === 'STOP') {
+				this._zwave
+					.writeValue(
+						{
+							...valueId,
+							property: 'Up',
+						},
+						false,
+					)
+					.catch(() => {})
+				return null
+			}
+
 			// try to parse string to bools
 			if (typeof payload === 'string' && isNaN(parseInt(payload))) {
 				if (/\btrue\b|\bon\b|\block\b/gi.test(payload)) payload = true
